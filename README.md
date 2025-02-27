@@ -1,65 +1,92 @@
-# Tarefa: Controle de LEDs RGB e Display SSD1306 com Joystick
+# Dispositivo Assistivo para Deficientes Visuais
 
-## Descrição do Projeto
-Este projeto implementa o controle de um LED RGB e a exibição de um quadrado móvel no display SSD1306 utilizando o Raspberry Pi Pico W e a placa BitDogLab. O sistema utiliza conversores analógico-digitais (ADC) para capturar os valores do joystick, ajustando dinamicamente o brilho dos LEDs e movimentando o quadrado no display.
+## Descrição
+Este projeto consiste em um **dispositivo assistivo** para auxiliar **deficientes visuais**, utilizando um **joystick analógico, sensores de proximidade e feedback tátil/auditivo** (buzzer e LED). Quando o joystick se aproxima de um objeto, o sistema emite sinais sonoros e luminosos para alertar o usuário.
 
-Adicionalmente, o projeto emprega interrupções (IRQ) para capturar eventos dos botões, permitindo alternar o estado do LED verde e modificar a borda do display.
+## Funcionalidades
+- **Leitura do joystick analógico** para determinar a posição do usuário.
+- **Geração de objetos aleatórios** no ambiente simulado.
+- **Cálculo da proximidade** entre o joystick e os objetos.
+- **Feedback tátil e auditivo**:
+  - O buzzer e o LED aumentam de intensidade conforme a aproximação dos objetos.
+- **Exibição no display OLED** da posição do joystick e dos objetos.
+- **Reinicialização dos objetos** ao pressionar um botão.
 
+## Componentes Utilizados
+### Hardware
+- **Placa Raspberry Pi Pico** (BitDogLab)
+- **Joystick analógico** (Eixos X e Y via ADC)
+- **Buzzer (PWM)**
+- **LED (PWM)**
+- **Display OLED SSD1306** (Comunicação I2C)
+- **Botões de controle** (GPIO Digital)
 
+### Software
+- **Linguagem:** C/C++
+- **Bibliotecas:**
+  - `pico/stdlib.h` (funções básicas do Raspberry Pi Pico)
+  - `hardware/adc.h` (leitura do joystick)
+  - `hardware/pwm.h` (controle do LED e buzzer)
+  - `hardware/i2c.h` (comunicação com o display OLED)
+  - `ssd1306.h` e `font.h` (manipulação do display OLED)
+  - `math.h` (cálculo de distância)
 
----
+## Configuração dos Pinos
 
-## Requisitos
-1. **Controle dos LEDs RGB via Joystick:**  
-   - LED Azul: Brilho proporcional ao eixo Y do joystick.
-   - LED Vermelho: Brilho proporcional ao eixo X do joystick.
-   - LEDs controlados via PWM para variação suave da intensidade luminosa
-   
-2. **Movimentação do Quadrado no Display SSD1306:**  
-   - **O quadrado de 8x8 pixels deve se mover conforme os valores do joystick.**.  
-   - **O display está conectado via I2C**.
-     
-3. **Funcionalidades dos Botões:**  
-   - **Botão do Joystick (GPIO 22): Alterna o estado do LED Verde e modifica a borda do display**.
-   - **Botão A (GPIO 5): Ativa ou desativa os LEDs PWM**.    
-   - **Ambos os botões devem utilizar interrupções (IRQ) e possuir tratamento de debouncing**.   
+| Componente       | GPIO  |
+|-----------------|------|
+| Joystick X      | 26   |
+| Joystick Y      | 27   |
+| Botão A        | 5    |
+| Botão B        | 6    |
+| LED Vermelho    | 13   |
+| LED Verde       | 11   |
+| Buzzer A        | 21   |
+| Buzzer B        | 10   |
+| Display OLED SDA | 14   |
+| Display OLED SCL | 15   |
 
+## Instalação e Execução
+### 1. Compilação do Código
+1. Instale o SDK do **Raspberry Pi Pico**.
+2. Compile o código utilizando o `CMake`:
+   ```sh
+   mkdir build && cd build
+   cmake ..
+   make
+   ```
 
----
+### 2. Carregamento no Raspberry Pi Pico
+1. Conecte o Pico ao computador segurando **BOOTSEL**.
+2. Copie o arquivo `.uf2` gerado para a unidade que aparece no explorador de arquivos.
 
-## Configuração do Hardware
-### Componentes Simulados no Wokwi
+### 3. Uso
+- Mova o **joystick** para navegar no ambiente.
+- O **buzzer e o LED** aumentarão de intensidade conforme a aproximação dos objetos.
+- Pressione o **botão A** para **gerar novos objetos aleatórios**.
+- Pressione o **botão B** para entrar no **modo BOOTSEL**.
 
-- **Raspberry Pi Pico W**.
-- **Placa BitDogLab**.
-- **LED RGB conectado às GPIOs 11, 12 e 13**.
-- **Joystick conectado às GPIOs 26 (X) e 27 (Y)**.
-- **Botão do Joystick na GPIO 22**.
-- **Botão A na GPIO 5**.
-- **Display SSD1306 conectado via I2C (GPIO 14 e 15)**. 
+## Funcionamento do Código
+1. **Inicialização**
+   - Configura PWM, ADC e GPIOs.
+   - Inicializa o **display OLED**.
+   - Gera os **objetos aleatórios**.
+2. **Loop principal**
+   - Lê os valores do joystick.
+   - Atualiza o display OLED.
+   - Calcula a proximidade com os objetos.
+   - Ajusta a intensidade do LED e do buzzer.
+   - Aguarda 100ms antes da próxima leitura.
 
-## Compilação e Execução
+## Melhorias Futuras
+- **Adicionar sensores ultrassônicos** para medição real da distância.
+- **Criar um modo de calibração** para ajustar a sensibilidade.
+- **Conectar a um aplicativo via Bluetooth** para feedback remoto.
 
-1. Clone o repositório do projeto.
-2. Configure o ambiente de desenvolvimento do Raspberry Pi Pico.
-3. Compile o código usando o CMake:
-4. Carregue o binário no Raspberry Pi Pico.
-
-###  Testando no Simulador
-Se quiser testar no **Wokwi**, abra o arquivo `diagram.json` e inicie a simulação.
-
----
-
-##  Link do video
- **Assista o video**:
-https://youtu.be/l8wWqN2WEhM
- 
-
----
-
+## Link do video
+(https://youtu.be/5fK91k4SfLc)
 ##  Equipe de Desenvolvimento
 | Nome | GitHub |
 |------|--------|
 | Guilherme Lopes | [@GuilhermeFRLopes](https://github.com/GuilhermeFRLopes) |
-
 
